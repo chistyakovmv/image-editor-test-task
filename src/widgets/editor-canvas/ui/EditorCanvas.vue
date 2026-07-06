@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import { renderImageToCanvas, useImageEditStore } from '@/entities/image-edit';
+import { computed } from 'vue';
+import { useImageEditStore } from '@/entities/image-edit';
 import type { useCropSession } from '@/features/image-crop';
+import { useCanvasPreview } from '../model/useCanvasPreview';
 import CropOverlay from './CropOverlay.vue';
 
 type CropSession = ReturnType<typeof useCropSession>;
@@ -11,11 +12,6 @@ const props = defineProps<{
 }>();
 
 const store = useImageEditStore();
-const canvasElement = ref<HTMLCanvasElement | null>(null);
-const renderError = ref('');
-const isRendering = ref(false);
-let renderToken = 0;
-
 const isCropMode = computed(() => props.cropSession.isCropMode.value);
 const activeCrop = computed(() => {
   if (store.showOriginal) {
@@ -25,73 +21,10 @@ const activeCrop = computed(() => {
   return isCropMode.value ? props.cropSession.draftCrop.value : store.effectiveCrop;
 });
 
-const dimensionsLabel = computed(() => {
-  if (!store.source) {
-    return 'No image loaded';
-  }
-
-  const crop = activeCrop.value;
-  const width = crop?.width ?? store.source.width;
-  const height = crop?.height ?? store.source.height;
-
-  return `${Math.round(width)} x ${Math.round(height)} px`;
+const { canvasElement, dimensionsLabel, isRendering, modeLabel, renderError } = useCanvasPreview({
+  activeCrop,
+  isCropMode,
 });
-
-const modeLabel = computed(() => {
-  if (store.showOriginal) {
-    return 'Original';
-  }
-
-  return isCropMode.value ? 'Crop draft' : 'Edited';
-});
-
-const renderPreview = async () => {
-  if (!canvasElement.value || !store.source || !store.effectiveCrop) {
-    return;
-  }
-
-  const currentToken = ++renderToken;
-  isRendering.value = true;
-  renderError.value = '';
-
-  try {
-    await renderImageToCanvas(canvasElement.value, {
-      source: store.source,
-      crop: activeCrop.value ?? store.effectiveCrop,
-      adjustments: store.adjustments,
-      filter: store.filter,
-      ignoreEdits: store.showOriginal,
-    });
-  } catch {
-    if (currentToken === renderToken) {
-      renderError.value = 'Preview render failed.';
-    }
-  } finally {
-    if (currentToken === renderToken) {
-      isRendering.value = false;
-    }
-  }
-};
-
-watch(
-  () => [
-    store.source?.id,
-    activeCrop.value?.x,
-    activeCrop.value?.y,
-    activeCrop.value?.width,
-    activeCrop.value?.height,
-    store.adjustments.brightness,
-    store.adjustments.contrast,
-    store.adjustments.saturation,
-    store.filter,
-    store.showOriginal,
-    isCropMode.value,
-  ],
-  () => {
-    void renderPreview();
-  },
-  { immediate: true },
-);
 </script>
 
 <template>
@@ -120,7 +53,9 @@ watch(
         <v-progress-circular v-if="isRendering" class="render-loader" color="primary" indeterminate size="32" />
       </div>
 
-      <v-alert v-if="renderError" class="mt-4" type="error" variant="tonal">{{ renderError }}</v-alert>
+      <v-alert v-if="renderError" class="mt-4" type="error" variant="tonal">
+        {{ renderError }}
+      </v-alert>
     </v-card-text>
   </v-card>
 </template>

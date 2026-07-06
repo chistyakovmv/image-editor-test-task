@@ -1,44 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { canvasToBlob, renderImageToCanvas, useImageEditStore } from '@/entities/image-edit';
-import { createExportName, downloadBlob, downloadOperationsJson } from './download';
+import { useImageEditStore } from '@/entities/image-edit';
+import { useImageExport } from '../model/useImageExport';
 
 const store = useImageEditStore();
-const isExporting = ref(false);
-const errorMessage = ref('');
-
-const exportImage = async () => {
-  if (!store.source || !store.effectiveCrop) {
-    return;
-  }
-
-  errorMessage.value = '';
-  isExporting.value = true;
-
-  try {
-    const canvas = document.createElement('canvas');
-    await renderImageToCanvas(canvas, {
-      source: store.source,
-      crop: store.effectiveCrop,
-      adjustments: store.adjustments,
-      filter: store.filter,
-    });
-    const blob = await canvasToBlob(canvas);
-    downloadBlob(blob, createExportName(store.source.name, 'png'));
-  } catch {
-    errorMessage.value = 'Export failed. Please try another image.';
-  } finally {
-    isExporting.value = false;
-  }
-};
-
-const exportOperations = () => {
-  if (!store.operationsDocument || !store.source) {
-    return;
-  }
-
-  downloadOperationsJson(store.operationsDocument, createExportName(store.source.name, 'json'));
-};
+const { errorMessage, exportImage, exportOperations, isExporting } = useImageExport();
 </script>
 
 <template>
@@ -77,7 +42,9 @@ const exportOperations = () => {
         Download operations JSON
       </v-btn>
 
-      <v-alert v-if="errorMessage" type="error" variant="tonal">{{ errorMessage }}</v-alert>
+      <v-alert v-if="errorMessage" type="error" variant="tonal">
+        {{ errorMessage }}
+      </v-alert>
     </v-card-text>
   </v-card>
 </template>
