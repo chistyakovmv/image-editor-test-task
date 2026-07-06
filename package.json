@@ -1,0 +1,26 @@
+{
+  "name": "image-editor-test-task",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "vue-tsc -b"
+  },
+  "dependencies": {
+    "@mdi/font": "^7.4.47",
+    "cropperjs": "^1.6.2",
+    "pinia": "^3.0.3",
+    "vue": "^3.5.17",
+    "vuetify": "^3.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.0",
+    "@vitejs/plugin-vue": "^6.0.0",
+    "typescript": "~5.8.3",
+    "vite": "^7.0.0",
+    "vue-tsc": "^2.2.10"
+  }
+}
