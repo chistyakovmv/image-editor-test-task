@@ -1,34 +1,10 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
-import {
-  DEFAULT_ADJUSTMENTS,
-  type CropRect,
-  type FilterKind,
-  type ImageAdjustments,
-  type ImageEditOperations,
-  type SourceImage,
-} from './types';
-
-const createSourceImage = async (file: File): Promise<SourceImage> => {
-  const objectUrl = URL.createObjectURL(file);
-
-  try {
-    const bitmap = await createImageBitmap(file);
-
-    return {
-      id: crypto.randomUUID(),
-      name: file.name,
-      type: file.type || 'image/png',
-      objectUrl,
-      width: bitmap.width,
-      height: bitmap.height,
-      loadedAt: new Date().toISOString(),
-    };
-  } catch (error) {
-    URL.revokeObjectURL(objectUrl);
-    throw error;
-  }
-};
+import { createSourceImageFromFile } from '@/shared/lib/browser/create-source-image';
+import { DEFAULT_ADJUSTMENTS } from './constants';
+import { getFullImageCrop, normalizeCropRect } from './crop';
+import { createOperationsDocument } from './operations';
+import type { CropRect, FilterKind, ImageAdjustments, ImageEditOperations, SourceImage } from './types';
 
 export const useImageEditStore = defineStore('image-edit', () => {
   const source = ref<SourceImage | null>(null);
@@ -44,34 +20,7 @@ export const useImageEditStore = defineStore('image-edit', () => {
       return null;
     }
 
-    return crop.value ?? {
-      x: 0,
-      y: 0,
-      width: source.value.width,
-      height: source.value.height,
-    };
-  });
-
-  const cssFilter = computed(() => {
-    if (showOriginal.value) {
-      return 'none';
-    }
-
-    const base = [
-      `brightness(${adjustments.value.brightness}%)`,
-      `contrast(${adjustments.value.contrast}%)`,
-      `saturate(${adjustments.value.saturation}%)`,
-    ];
-
-    if (filter.value === 'grayscale') {
-      base.push('grayscale(1)');
-    }
-
-    if (filter.value === 'sepia') {
-      base.push('sepia(1)');
-    }
-
-    return base.join(' ');
+    return crop.value ?? getFullImageCrop(source.value);
   });
 
   const operationsDocument = computed<ImageEditOperations | null>(() => {
@@ -79,32 +28,15 @@ export const useImageEditStore = defineStore('image-edit', () => {
       return null;
     }
 
-    const operations: ImageEditOperations['operations'] = [];
-
-    if (effectiveCrop.value) {
-      operations.push({ type: 'crop', rect: effectiveCrop.value });
-    }
-
-    operations.push({ type: 'adjust', adjustments: { ...adjustments.value } });
-
-    if (filter.value !== 'none') {
-      operations.push({ type: 'filter', name: filter.value });
-    }
-
-    return {
-      version: 1,
-      source: {
-        name: source.value.name,
-        width: source.value.width,
-        height: source.value.height,
-      },
-      operations,
-    };
+    return createOperationsDocument({
+      source: source.value,
+      crop: crop.value,
+      adjustments: adjustments.value,
+      filter: filter.value,
+    });
   });
 
-  const loadImage = async (file: File) => {
-    const nextSource = await createSourceImage(file);
-
+  const setSource = (nextSource: SourceImage) => {
     if (source.value) {
       URL.revokeObjectURL(source.value.objectUrl);
     }
@@ -113,8 +45,16 @@ export const useImageEditStore = defineStore('image-edit', () => {
     resetOperations();
   };
 
+  const loadImage = async (file: File) => {
+    setSource(await createSourceImageFromFile(file));
+  };
+
   const setCrop = (nextCrop: CropRect | null) => {
-    crop.value = nextCrop;
+    crop.value = nextCrop && source.value ? normalizeCropRect(nextCrop, source.value) : nextCrop;
+  };
+
+  const resetCrop = () => {
+    crop.value = source.value ? getFullImageCrop(source.value) : null;
   };
 
   const updateAdjustment = (key: keyof ImageAdjustments, value: number) => {
@@ -133,9 +73,7 @@ export const useImageEditStore = defineStore('image-edit', () => {
   };
 
   const resetOperations = () => {
-    crop.value = source.value
-      ? { x: 0, y: 0, width: source.value.width, height: source.value.height }
-      : null;
+    resetCrop();
     adjustments.value = { ...DEFAULT_ADJUSTMENTS };
     filter.value = 'none';
     showOriginal.value = false;
@@ -149,10 +87,11 @@ export const useImageEditStore = defineStore('image-edit', () => {
     showOriginal,
     hasImage,
     effectiveCrop,
-    cssFilter,
     operationsDocument,
+    setSource,
     loadImage,
     setCrop,
+    resetCrop,
     updateAdjustment,
     setFilter,
     setShowOriginal,

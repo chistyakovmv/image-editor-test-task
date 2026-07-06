@@ -1,3 +1,4 @@
+import { buildCanvasFilter } from '../model/filters';
 import type { CropRect, FilterKind, ImageAdjustments, SourceImage } from '../model/types';
 
 export type RenderImageParams = {
@@ -15,24 +16,6 @@ const loadHtmlImage = (url: string): Promise<HTMLImageElement> =>
     image.onerror = () => reject(new Error('Failed to load image for rendering.'));
     image.src = url;
   });
-
-const buildCanvasFilter = (adjustments: ImageAdjustments, filter: FilterKind) => {
-  const filters = [
-    `brightness(${adjustments.brightness}%)`,
-    `contrast(${adjustments.contrast}%)`,
-    `saturate(${adjustments.saturation}%)`,
-  ];
-
-  if (filter === 'grayscale') {
-    filters.push('grayscale(1)');
-  }
-
-  if (filter === 'sepia') {
-    filters.push('sepia(1)');
-  }
-
-  return filters.join(' ');
-};
 
 export const renderImageToCanvas = async (canvas: HTMLCanvasElement, params: RenderImageParams) => {
   const image = await loadHtmlImage(params.source.objectUrl);

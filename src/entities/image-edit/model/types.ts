@@ -36,15 +36,3 @@ export type ImageEditOperations = {
     | { type: 'filter'; name: Exclude<FilterKind, 'none'> }
   >;
 };
-
-export const DEFAULT_ADJUSTMENTS: ImageAdjustments = {
-  brightness: 100,
-  contrast: 100,
-  saturation: 100,
-};
-
-export const FILTER_OPTIONS: Array<{ title: string; value: FilterKind }> = [
-  { title: 'None', value: 'none' },
-  { title: 'Greyscale', value: 'grayscale' },
-  { title: 'Sepia', value: 'sepia' },
-];
