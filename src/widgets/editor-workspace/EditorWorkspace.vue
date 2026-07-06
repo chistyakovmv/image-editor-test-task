@@ -18,7 +18,7 @@ const cropSession = useCropSession();
     <aside class="side-panel">
       <ImageUploader />
       <CropActions :session="cropSession" />
-      <AdjustmentPanel />
+      <AdjustmentPanel :is-crop-mode="cropSession.isCropMode.value" />
       <ExportPanel />
       <OperationsPreview />
     </aside>

@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import { FILTER_OPTIONS, useImageEditStore, type ImageAdjustments, type FilterKind } from '@/entities/image-edit';
 
+const props = withDefaults(
+  defineProps<{
+    isCropMode?: boolean;
+  }>(),
+  {
+    isCropMode: false,
+  },
+);
+
 const store = useImageEditStore();
 
 const sliders: Array<{ key: keyof ImageAdjustments; label: string; min: number; max: number; icon: string }> = [
@@ -55,13 +64,17 @@ const updateFilter = (value: FilterKind | null) => {
         @update:model-value="updateFilter"
       />
 
+      <v-alert v-if="props.isCropMode" density="compact" type="info" variant="tonal">
+        Apply or cancel crop before resetting edits or comparing with original.
+      </v-alert>
+
       <div class="actions">
         <v-btn
           block
           color="secondary"
           prepend-icon="mdi-restore"
           variant="flat"
-          :disabled="!store.hasImage"
+          :disabled="!store.hasImage || props.isCropMode"
           @click="store.resetOperations"
         >
           Reset edits
@@ -77,8 +90,8 @@ const updateFilter = (value: FilterKind | null) => {
           variant="outlined"
           @update:model-value="store.setShowOriginal(Boolean($event))"
         >
-          <v-btn :value="false" :disabled="!store.hasImage">Edited</v-btn>
-          <v-btn :value="true" :disabled="!store.hasImage">Original</v-btn>
+          <v-btn :value="false" :disabled="!store.hasImage || props.isCropMode">Edited</v-btn>
+          <v-btn :value="true" :disabled="!store.hasImage || props.isCropMode">Original</v-btn>
         </v-btn-toggle>
       </div>
     </v-card-text>
