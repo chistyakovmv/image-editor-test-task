@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
-import { createSourceImageFromFile } from '@/shared/lib/browser/create-source-image';
+import { createSourceImageFromFile } from '../lib/create-source-image';
 import { DEFAULT_ADJUSTMENTS } from './constants';
 import { getFullImageCrop, normalizeCropRect } from './crop';
 import { createOperationsDocument } from './operations';
