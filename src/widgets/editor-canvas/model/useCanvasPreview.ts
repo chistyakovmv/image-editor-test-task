@@ -1,12 +1,19 @@
-import { computed, ref, watch, type ComputedRef } from 'vue';
-import { renderImageToCanvas, useImageEditStore, type CropRect } from '@/entities/image-edit';
+import { computed, nextTick, ref, watch, type ComputedRef } from 'vue';
+import { renderImageToCanvas, useImageEditStore, type CropRect, type RenderImageParams } from '@/entities/image-edit';
+
+export type PreviewRenderer = (canvas: HTMLCanvasElement, params: RenderImageParams) => Promise<void>;
 
 export type UseCanvasPreviewParams = {
   activeCrop: ComputedRef<CropRect | null>;
   isCropMode: ComputedRef<boolean>;
+  renderer?: PreviewRenderer;
 };
 
-export const useCanvasPreview = ({ activeCrop, isCropMode }: UseCanvasPreviewParams) => {
+export const useCanvasPreview = ({
+  activeCrop,
+  isCropMode,
+  renderer = renderImageToCanvas,
+}: UseCanvasPreviewParams) => {
   const store = useImageEditStore();
   const canvasElement = ref<HTMLCanvasElement | null>(null);
   const renderError = ref('');
@@ -34,6 +41,8 @@ export const useCanvasPreview = ({ activeCrop, isCropMode }: UseCanvasPreviewPar
   });
 
   const renderPreview = async () => {
+    await nextTick();
+
     if (!canvasElement.value || !store.source || !store.effectiveCrop) {
       return;
     }
@@ -43,7 +52,7 @@ export const useCanvasPreview = ({ activeCrop, isCropMode }: UseCanvasPreviewPar
     renderError.value = '';
 
     try {
-      await renderImageToCanvas(canvasElement.value, {
+      await renderer(canvasElement.value, {
         source: store.source,
         crop: activeCrop.value ?? store.effectiveCrop,
         adjustments: store.adjustments,
@@ -63,6 +72,7 @@ export const useCanvasPreview = ({ activeCrop, isCropMode }: UseCanvasPreviewPar
 
   watch(
     () => [
+      canvasElement.value,
       store.source?.id,
       activeCrop.value?.x,
       activeCrop.value?.y,
@@ -78,7 +88,7 @@ export const useCanvasPreview = ({ activeCrop, isCropMode }: UseCanvasPreviewPar
     () => {
       void renderPreview();
     },
-    { immediate: true },
+    { immediate: true, flush: 'post' },
   );
 
   return {
