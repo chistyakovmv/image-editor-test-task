@@ -7,7 +7,9 @@
     "dev": "vite --host 0.0.0.0",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
-    "typecheck": "vue-tsc -b"
+    "typecheck": "vue-tsc -b",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
@@ -19,8 +21,10 @@
   "devDependencies": {
     "@types/node": "^26.1.0",
     "@vitejs/plugin-vue": "^6.0.0",
+    "jsdom": "^29.1.1",
     "typescript": "~5.8.3",
     "vite": "^7.0.0",
+    "vitest": "^4.1.10",
     "vue-tsc": "^2.2.10"
   }
 }
