@@ -4,7 +4,13 @@ import { createSourceImageFromFile } from '../lib/create-source-image';
 import { DEFAULT_ADJUSTMENTS } from './constants';
 import { getFullImageCrop, normalizeCropRect } from './crop';
 import { createOperationsDocument } from './operations';
-import type { CropRect, FilterKind, ImageAdjustments, ImageEditOperations, SourceImage } from './types';
+import type {
+  CropRect,
+  FilterKind,
+  ImageAdjustments,
+  ImageEditOperations,
+  SourceImage,
+} from './types';
 
 export const useImageEditStore = defineStore('image-edit', () => {
   const source = ref<SourceImage | null>(null);

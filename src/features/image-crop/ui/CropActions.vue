@@ -22,7 +22,8 @@ const isCropMode = computed(() => props.session.isCropMode.value);
 
     <v-card-text class="actions-stack">
       <p>
-        Crop is edited as a draft. Resize or layout changes cannot change the saved operation until you apply it.
+        Crop is edited as a draft. Resize or layout changes cannot change the saved operation until
+        you apply it.
       </p>
 
       <template v-if="!isCropMode">
@@ -62,11 +63,22 @@ const isCropMode = computed(() => props.session.isCropMode.value);
           >
             Apply
           </v-btn>
-          <v-btn color="secondary" prepend-icon="mdi-close" variant="outlined" @click="session.cancelCrop">
+          <v-btn
+            color="secondary"
+            prepend-icon="mdi-close"
+            variant="outlined"
+            @click="session.cancelCrop"
+          >
             Cancel
           </v-btn>
         </div>
-        <v-btn block color="primary" prepend-icon="mdi-image-size-select-large" variant="text" @click="session.resetCrop">
+        <v-btn
+          block
+          color="primary"
+          prepend-icon="mdi-image-size-select-large"
+          variant="text"
+          @click="session.resetCrop"
+        >
           Draft full image
         </v-btn>
       </template>

@@ -1,6 +1,10 @@
 :root {
   color: #1d2424;
-  font-family: Avenir Next, Trebuchet MS, Verdana, sans-serif;
+  font-family:
+    Avenir Next,
+    Trebuchet MS,
+    Verdana,
+    sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;

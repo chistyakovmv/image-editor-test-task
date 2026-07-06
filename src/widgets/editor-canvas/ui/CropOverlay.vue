@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import Cropper from 'cropperjs';
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
-import { areCropRectsEqual, buildCanvasFilter, useImageEditStore, type CropRect, type SourceImage } from '@/entities/image-edit';
+import {
+  areCropRectsEqual,
+  buildCanvasFilter,
+  useImageEditStore,
+  type CropRect,
+  type SourceImage,
+} from '@/entities/image-edit';
 
 type CropSession = {
   isCropMode: { value: boolean };
@@ -88,17 +94,20 @@ watch(
   { immediate: true },
 );
 
-watch(
-  () => props.session.draftCrop.value,
-  syncCropperFromDraft,
-);
+watch(() => props.session.draftCrop.value, syncCropperFromDraft);
 
 onBeforeUnmount(destroyCropper);
 </script>
 
 <template>
   <div class="crop-layer">
-    <img v-if="source" ref="imageElement" :src="source.objectUrl" :alt="source.name" :style="{ filter: previewFilter }" />
+    <img
+      v-if="source"
+      ref="imageElement"
+      :src="source.objectUrl"
+      :alt="source.name"
+      :style="{ filter: previewFilter }"
+    />
   </div>
 </template>
 

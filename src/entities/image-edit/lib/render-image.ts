@@ -34,7 +34,9 @@ export const renderImageToCanvas = async (canvas: HTMLCanvasElement, params: Ren
 
   context.clearRect(0, 0, canvas.width, canvas.height);
   context.imageSmoothingQuality = 'high';
-  context.filter = params.ignoreEdits ? 'none' : buildCanvasFilter(params.adjustments, params.filter);
+  context.filter = params.ignoreEdits
+    ? 'none'
+    : buildCanvasFilter(params.adjustments, params.filter);
   context.drawImage(
     image,
     crop.x,
@@ -48,14 +50,22 @@ export const renderImageToCanvas = async (canvas: HTMLCanvasElement, params: Ren
   );
 };
 
-export const canvasToBlob = (canvas: HTMLCanvasElement, type = 'image/png', quality = 0.95): Promise<Blob> =>
+export const canvasToBlob = (
+  canvas: HTMLCanvasElement,
+  type = 'image/png',
+  quality = 0.95,
+): Promise<Blob> =>
   new Promise((resolve, reject) => {
-    canvas.toBlob((blob) => {
-      if (!blob) {
-        reject(new Error('Failed to export image.'));
-        return;
-      }
+    canvas.toBlob(
+      (blob) => {
+        if (!blob) {
+          reject(new Error('Failed to export image.'));
+          return;
+        }
 
-      resolve(blob);
-    }, type, quality);
+        resolve(blob);
+      },
+      type,
+      quality,
+    );
   });

@@ -40,17 +40,30 @@ const { canvasElement, dimensionsLabel, isRendering, modeLabel, renderError } = 
     <v-card-text>
       <div class="stage" :class="{ 'is-empty': !store.hasImage, 'is-cropping': isCropMode }">
         <div v-if="store.hasImage" class="artboard">
-          <CropOverlay v-if="isCropMode && !store.showOriginal" :source="store.source" :session="cropSession" />
+          <CropOverlay
+            v-if="isCropMode && !store.showOriginal"
+            :source="store.source"
+            :session="cropSession"
+          />
           <canvas v-show="!isCropMode || store.showOriginal" ref="canvasElement" />
         </div>
 
         <div v-else class="empty-stage">
           <v-icon icon="mdi-image-plus-outline" size="64" />
           <strong>Load an image to start editing</strong>
-          <span>The original will stay untouched while operations are replayed into preview/export.</span>
+          <span
+            >The original will stay untouched while operations are replayed into
+            preview/export.</span
+          >
         </div>
 
-        <v-progress-circular v-if="isRendering" class="render-loader" color="primary" indeterminate size="32" />
+        <v-progress-circular
+          v-if="isRendering"
+          class="render-loader"
+          color="primary"
+          indeterminate
+          size="32"
+        />
       </div>
 
       <v-alert v-if="renderError" class="mt-4" type="error" variant="tonal">
@@ -95,9 +108,12 @@ const { canvasElement, dimensionsLabel, isRendering, modeLabel, renderError } = 
   background:
     linear-gradient(45deg, rgba(255, 250, 241, 0.08) 25%, transparent 25%),
     linear-gradient(-45deg, rgba(255, 250, 241, 0.08) 25%, transparent 25%),
-    radial-gradient(circle at 15% 20%, rgba(244, 189, 79, 0.16), transparent 20rem),
-    #0d2221;
-  background-size: 28px 28px, 28px 28px, auto, auto;
+    radial-gradient(circle at 15% 20%, rgba(244, 189, 79, 0.16), transparent 20rem), #0d2221;
+  background-size:
+    28px 28px,
+    28px 28px,
+    auto,
+    auto;
 }
 
 .artboard {

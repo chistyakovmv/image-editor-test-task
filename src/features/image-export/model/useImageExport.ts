@@ -38,7 +38,9 @@ export const useImageExport = () => {
       return;
     }
 
-    const blob = new Blob([JSON.stringify(store.operationsDocument, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(store.operationsDocument, null, 2)], {
+      type: 'application/json',
+    });
     downloadBlob(blob, createExportName(store.source.name, 'json'));
   };
 

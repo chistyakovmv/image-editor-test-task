@@ -12,7 +12,8 @@ import { EditorWorkspace } from '@/widgets/editor-workspace';
             <h1>Non-destructive image editor</h1>
           </div>
           <p class="lead">
-            Upload artwork, crop it, tune brightness, contrast and saturation in real time, then export both the rendered image and a replayable operation log.
+            Upload artwork, crop it, tune brightness, contrast and saturation in real time, then
+            export both the rendered image and a replayable operation log.
           </p>
         </header>
 

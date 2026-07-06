@@ -1,7 +1,15 @@
 import { computed, nextTick, ref, watch, type ComputedRef } from 'vue';
-import { renderImageToCanvas, useImageEditStore, type CropRect, type RenderImageParams } from '@/entities/image-edit';
+import {
+  renderImageToCanvas,
+  useImageEditStore,
+  type CropRect,
+  type RenderImageParams,
+} from '@/entities/image-edit';
 
-export type PreviewRenderer = (canvas: HTMLCanvasElement, params: RenderImageParams) => Promise<void>;
+export type PreviewRenderer = (
+  canvas: HTMLCanvasElement,
+  params: RenderImageParams,
+) => Promise<void>;
 
 export type UseCanvasPreviewParams = {
   activeCrop: ComputedRef<CropRect | null>;

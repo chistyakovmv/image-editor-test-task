@@ -1,6 +1,12 @@
 import { DEFAULT_ADJUSTMENTS } from './constants';
 import { getFullImageCrop } from './crop';
-import type { CropRect, FilterKind, ImageAdjustments, ImageEditOperations, SourceImage } from './types';
+import type {
+  CropRect,
+  FilterKind,
+  ImageAdjustments,
+  ImageEditOperations,
+  SourceImage,
+} from './types';
 
 export type ImageEditStateSnapshot = {
   source: SourceImage;

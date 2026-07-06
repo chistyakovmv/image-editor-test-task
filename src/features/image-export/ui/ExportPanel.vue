@@ -15,7 +15,8 @@ const { errorMessage, exportImage, exportOperations, isExporting } = useImageExp
 
     <v-card-text class="export-stack">
       <p>
-        Download the rendered PNG, or export the operation JSON to replay the same crop, adjustments and filter.
+        Download the rendered PNG, or export the operation JSON to replay the same crop, adjustments
+        and filter.
       </p>
 
       <v-btn

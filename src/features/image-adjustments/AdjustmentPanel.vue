@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { FILTER_OPTIONS, useImageEditStore, type ImageAdjustments, type FilterKind } from '@/entities/image-edit';
+import {
+  FILTER_OPTIONS,
+  useImageEditStore,
+  type ImageAdjustments,
+  type FilterKind,
+} from '@/entities/image-edit';
 
 const props = withDefaults(
   defineProps<{
@@ -12,7 +17,13 @@ const props = withDefaults(
 
 const store = useImageEditStore();
 
-const sliders: Array<{ key: keyof ImageAdjustments; label: string; min: number; max: number; icon: string }> = [
+const sliders: Array<{
+  key: keyof ImageAdjustments;
+  label: string;
+  min: number;
+  max: number;
+  icon: string;
+}> = [
   { key: 'brightness', label: 'Brightness', min: 0, max: 200, icon: 'mdi-white-balance-sunny' },
   { key: 'contrast', label: 'Contrast', min: 0, max: 200, icon: 'mdi-contrast-circle' },
   { key: 'saturation', label: 'Saturation', min: 0, max: 200, icon: 'mdi-palette' },

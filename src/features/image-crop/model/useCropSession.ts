@@ -1,5 +1,11 @@
 import { computed, ref } from 'vue';
-import { areCropRectsEqual, getFullImageCrop, normalizeCropRect, useImageEditStore, type CropRect } from '@/entities/image-edit';
+import {
+  areCropRectsEqual,
+  getFullImageCrop,
+  normalizeCropRect,
+  useImageEditStore,
+  type CropRect,
+} from '@/entities/image-edit';
 
 export const useCropSession = () => {
   const store = useImageEditStore();
