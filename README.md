@@ -84,6 +84,8 @@ The important business rules are pure functions or small composables:
 
 The tests intentionally focus on the edit model and workflow decisions rather than testing cropperjs itself.
 
+`npm run lint` also enforces FSD dependency boundaries between app, pages, widgets, features, entities and shared layers.
+
 ## Trade-offs
 
 - Canvas filters are used for brightness/contrast/saturation/filter operations. This keeps the implementation compact and deterministic enough for the task, but a production print pipeline could replace it with a more explicit pixel-processing engine or WASM module.
