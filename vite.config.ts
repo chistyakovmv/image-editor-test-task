@@ -9,4 +9,15 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vue: ['vue', 'pinia'],
+          vuetify: ['vuetify'],
+          cropper: ['cropperjs'],
+        },
+      },
+    },
+  },
 });
