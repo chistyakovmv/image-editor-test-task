@@ -1,16 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useImageEditStore } from '@/entities/image-edit';
+import { useOperationsPreview } from './model/useOperationsPreview';
 
-const store = useImageEditStore();
-
-const jsonPreview = computed(() => {
-  if (!store.operationsDocument) {
-    return '{\n  "operations": []\n}';
-  }
-
-  return JSON.stringify(store.operationsDocument, null, 2);
-});
+const { jsonPreview } = useOperationsPreview();
 </script>
 
 <template>

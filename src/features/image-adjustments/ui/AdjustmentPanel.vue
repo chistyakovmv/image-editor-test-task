@@ -1,10 +1,6 @@
 <script setup lang="ts">
-import {
-  FILTER_OPTIONS,
-  useImageEditStore,
-  type ImageAdjustments,
-  type FilterKind,
-} from '@/entities/image-edit';
+import { computed } from 'vue';
+import { useImageAdjustments } from '../model/useImageAdjustments';
 
 const props = withDefaults(
   defineProps<{
@@ -15,23 +11,19 @@ const props = withDefaults(
   },
 );
 
-const store = useImageEditStore();
-
-const sliders: Array<{
-  key: keyof ImageAdjustments;
-  label: string;
-  min: number;
-  max: number;
-  icon: string;
-}> = [
-  { key: 'brightness', label: 'Brightness', min: 0, max: 200, icon: 'mdi-white-balance-sunny' },
-  { key: 'contrast', label: 'Contrast', min: 0, max: 200, icon: 'mdi-contrast-circle' },
-  { key: 'saturation', label: 'Saturation', min: 0, max: 200, icon: 'mdi-palette' },
-];
-
-const updateFilter = (value: FilterKind | null) => {
-  store.setFilter(value ?? 'none');
-};
+const {
+  adjustments,
+  areGlobalActionsDisabled,
+  filter,
+  filterOptions,
+  hasImage,
+  resetOperations,
+  showOriginal,
+  sliders,
+  updateAdjustment,
+  updateFilter,
+  updateShowOriginal,
+} = useImageAdjustments(computed(() => props.isCropMode));
 </script>
 
 <template>
@@ -45,24 +37,24 @@ const updateFilter = (value: FilterKind | null) => {
       <div v-for="slider in sliders" :key="slider.key" class="slider-row">
         <div class="slider-label">
           <span><v-icon :icon="slider.icon" size="18" /> {{ slider.label }}</span>
-          <strong>{{ store.adjustments[slider.key] }}%</strong>
+          <strong>{{ adjustments[slider.key] }}%</strong>
         </div>
         <v-slider
-          :model-value="store.adjustments[slider.key]"
+          :model-value="adjustments[slider.key]"
           color="primary"
           density="comfortable"
           hide-details
           :max="slider.max"
           :min="slider.min"
           :step="1"
-          :disabled="!store.hasImage"
-          @update:model-value="store.updateAdjustment(slider.key, Number($event))"
+          :disabled="!hasImage"
+          @update:model-value="updateAdjustment(slider.key, Number($event))"
         />
       </div>
 
       <v-select
-        :model-value="store.filter"
-        :items="FILTER_OPTIONS"
+        :model-value="filter"
+        :items="filterOptions"
         color="primary"
         density="comfortable"
         hide-details
@@ -71,7 +63,7 @@ const updateFilter = (value: FilterKind | null) => {
         label="Bonus filter"
         prepend-inner-icon="mdi-auto-fix"
         variant="outlined"
-        :disabled="!store.hasImage"
+        :disabled="!hasImage"
         @update:model-value="updateFilter"
       />
 
@@ -85,24 +77,24 @@ const updateFilter = (value: FilterKind | null) => {
           color="secondary"
           prepend-icon="mdi-restore"
           variant="flat"
-          :disabled="!store.hasImage || props.isCropMode"
-          @click="store.resetOperations"
+          :disabled="areGlobalActionsDisabled"
+          @click="resetOperations"
         >
           Reset edits
         </v-btn>
 
         <v-btn-toggle
-          :model-value="store.showOriginal"
+          :model-value="showOriginal"
           class="compare-toggle"
           color="primary"
           divided
           mandatory
           rounded="lg"
           variant="outlined"
-          @update:model-value="store.setShowOriginal(Boolean($event))"
+          @update:model-value="updateShowOriginal(Boolean($event))"
         >
-          <v-btn :value="false" :disabled="!store.hasImage || props.isCropMode">Edited</v-btn>
-          <v-btn :value="true" :disabled="!store.hasImage || props.isCropMode">Original</v-btn>
+          <v-btn :value="false" :disabled="areGlobalActionsDisabled">Edited</v-btn>
+          <v-btn :value="true" :disabled="areGlobalActionsDisabled">Original</v-btn>
         </v-btn-toggle>
       </div>
     </v-card-text>
