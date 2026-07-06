@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import { useImageEditStore } from '@/entities/image-edit';
+import { createSourceImageFromFile, useImageEditStore } from '@/entities/image-edit';
 
 export const useImageUpload = () => {
   const store = useImageEditStore();
@@ -24,7 +24,7 @@ export const useImageUpload = () => {
     isLoading.value = true;
 
     try {
-      await store.loadImage(selectedFile);
+      store.setSource(await createSourceImageFromFile(selectedFile));
     } catch {
       errorMessage.value = 'The image could not be loaded.';
     } finally {

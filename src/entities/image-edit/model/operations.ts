@@ -1,4 +1,3 @@
-import { DEFAULT_ADJUSTMENTS } from './constants';
 import { getFullImageCrop } from './crop';
 import type {
   CropRect,
@@ -14,11 +13,6 @@ export type ImageEditStateSnapshot = {
   adjustments: ImageAdjustments;
   filter: FilterKind;
 };
-
-export const isDefaultAdjustment = (adjustments: ImageAdjustments) =>
-  adjustments.brightness === DEFAULT_ADJUSTMENTS.brightness &&
-  adjustments.contrast === DEFAULT_ADJUSTMENTS.contrast &&
-  adjustments.saturation === DEFAULT_ADJUSTMENTS.saturation;
 
 export const createOperationsDocument = (snapshot: ImageEditStateSnapshot): ImageEditOperations => {
   const crop = snapshot.crop ?? getFullImageCrop(snapshot.source);

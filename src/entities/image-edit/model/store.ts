@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
-import { createSourceImageFromFile } from '../lib/create-source-image';
 import { DEFAULT_ADJUSTMENTS } from './constants';
 import { getFullImageCrop, normalizeCropRect } from './crop';
 import { createOperationsDocument } from './operations';
@@ -51,10 +50,6 @@ export const useImageEditStore = defineStore('image-edit', () => {
     resetOperations();
   };
 
-  const loadImage = async (file: File) => {
-    setSource(await createSourceImageFromFile(file));
-  };
-
   const setCrop = (nextCrop: CropRect | null) => {
     crop.value = nextCrop && source.value ? normalizeCropRect(nextCrop, source.value) : nextCrop;
   };
@@ -95,7 +90,6 @@ export const useImageEditStore = defineStore('image-edit', () => {
     effectiveCrop,
     operationsDocument,
     setSource,
-    loadImage,
     setCrop,
     resetCrop,
     updateAdjustment,
